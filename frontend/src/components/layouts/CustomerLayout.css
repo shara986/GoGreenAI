@@ -1,0 +1,165 @@
+.customer-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8faf9;
+}
+
+.customer-header {
+  height: 64px;
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #2c7a3f;
+  display: none;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #2c7a3f;
+  cursor: pointer;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.cart-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.customer-body {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.customer-sidebar {
+  width: 250px;
+  background-color: white;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  transition: transform 0.3s ease;
+}
+
+.sidebar-nav {
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: #4a5568;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.sidebar-link:hover {
+  background-color: #f0fdf4;
+  color: #2c7a3f;
+}
+
+.sidebar-link.active {
+  background-color: #2c7a3f;
+  color: white;
+}
+
+.sidebar-footer {
+  padding: 1.5rem 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #fecaca;
+}
+
+.customer-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+  
+  .customer-sidebar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    bottom: 0;
+    z-index: 99;
+    transform: translateX(-100%);
+  }
+
+  .customer-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 98;
+  }
+
+  .customer-main {
+    padding: 1rem;
+  }
+}

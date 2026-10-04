@@ -1,0 +1,202 @@
+.gogreen-navbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 15px 0;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a4331;
+}
+
+.brand-icon {
+  font-size: 1.8rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-link {
+  color: #4a5568;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: 10px;
+}
+
+.btn-login {
+  color: var(--primary);
+  font-weight: 600;
+  padding: 8px 16px;
+  border: 2px solid var(--primary);
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.btn-login:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.register-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-register-main {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  color: white;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-block;
+  border: none;
+  box-shadow: 0 4px 6px rgba(46, 125, 50, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+}
+
+.btn-register-main:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  min-width: 240px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 9999;
+  border: 1px solid #e8f5e9;
+}
+
+.dropdown-menu-open {
+  display: block;
+  animation: fadeInDown 0.2s ease;
+}
+
+.register-dropdown:hover .dropdown-menu {
+  display: none;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 15px 20px;
+  color: #333;
+  font-weight: 500;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f8faf9;
+  color: var(--primary);
+}
+
+.user-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 12px;
+  background-color: #f0f7f4;
+  border-radius: 20px;
+  border: 1px solid #e0eee6;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #1a4331;
+}
+
+.role-badge {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.role-badge.role_customer { background: #e3f2fd; color: #1565c0; }
+.role-badge.role_nursery_owner { background: #fff3e0; color: #ef6c00; }
+.role-badge.role_admin { background: #fce4e4; color: #c62828; }
+
+.btn-logout {
+  background: none;
+  border: none;
+  color: #d32f2f;
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background-color: #ffebee;
+  border-radius: 20px;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* simple mobile hide for now */
+  }
+}

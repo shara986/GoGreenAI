@@ -29,6 +29,15 @@ public class NurseryController {
     }
 
     /**
+     * GET /nursery/profile - Authenticated profile endpoint
+     */
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<NurseryResponse>> getNurseryProfile() {
+        NurseryResponse response = nurseryService.getNursery();
+        return ResponseEntity.ok(ApiResponse.success(response, "Nursery profile retrieved successfully."));
+    }
+
+    /**
      * POST /nursery - ROLE_NURSERY_OWNER: set up the nursery
      */
     @PostMapping

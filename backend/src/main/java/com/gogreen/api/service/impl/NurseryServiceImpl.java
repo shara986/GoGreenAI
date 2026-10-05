@@ -63,14 +63,14 @@ public class NurseryServiceImpl implements NurseryService {
         User owner = userRepository.findByUsername(ownerUsername)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", ownerUsername));
 
-        Nursery nursery = nurseryRepository.findByUserId(owner.getId())
+        Nursery nursery = nurseryRepository.findFirstByOrderByCreatedAtAsc()
                 .orElseThrow(() -> new ResourceNotFoundException(
-                    "Nursery not found for owner: " + ownerUsername));
+                    "No nursery has been set up yet."));
 
         nurseryMapper.updateFromRequest(request, nursery);
         nursery = nurseryRepository.save(nursery);
 
-        log.info("Nursery updated: {}", nursery.getName());
+        log.info("Nursery updated: {} by owner: {}", nursery.getName(), ownerUsername);
         return nurseryMapper.toResponse(nursery);
     }
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createPlant, updatePlant, getNurseryPlantById } from '../../services/plantService';
 import { getCategories } from '../../services/categoryService';
+import { PlantFormSkeleton } from '../../components/common/Skeletons';
 import './NurseryPages.css';
 
 const PLANT_TYPES = [
@@ -35,7 +36,7 @@ const PlantForm = () => {
     const fetchData = async () => {
       try {
         const catRes = await getCategories();
-        setCategories(catRes.data);
+        setCategories(catRes.data || []);
 
         if (isEditMode) {
           const plantRes = await getNurseryPlantById(plantId);
@@ -55,7 +56,17 @@ const PlantForm = () => {
         }
       } catch (err) {
         console.error('Error fetching data for form:', err);
-        setError('Failed to load form data.');
+        if (err.response?.status === 404) {
+          setError('Plant not found.');
+        } else if (err.response?.status === 401) {
+          setError('Your session has expired. Please login again.');
+        } else if (err.response?.status === 403) {
+          setError('You do not have permission to access this section.');
+        } else if (!err.response) {
+          setError('Unable to connect to the server. Please try again.');
+        } else {
+          setError('Failed to load form data.');
+        }
       } finally {
         setLoading(false);
       }
@@ -76,19 +87,24 @@ const PlantForm = () => {
     e.preventDefault();
     setError('');
 
-    // Basic Validation
-    if (!formData.name || !formData.sku || !formData.categoryId || !formData.plantType) {
+    // Strict Validation
+    if (!formData.name.trim() || !formData.sku.trim() || !formData.categoryId || !formData.plantType) {
       setError('Please check the entered information. Name, SKU, Category, and Plant Type are required.');
       return;
     }
 
-    if (Number(formData.price) <= 0) {
+    if (isNaN(formData.price) || Number(formData.price) <= 0) {
       setError('Price must be greater than 0.');
       return;
     }
 
-    if (Number(formData.stock) < 0) {
+    if (isNaN(formData.stock) || Number(formData.stock) < 0) {
       setError('Stock cannot be negative.');
+      return;
+    }
+
+    if (formData.imageUrl && !formData.imageUrl.match(/^(https?:\/\/|\/)/)) {
+      setError('Please provide a valid image URL (e.g. https://...).');
       return;
     }
 
@@ -96,10 +112,8 @@ const PlantForm = () => {
     try {
       if (isEditMode) {
         await updatePlant(plantId, formData);
-        alert('Plant updated successfully!');
       } else {
         await createPlant(formData);
-        alert('Plant created successfully!');
       }
       navigate('/nursery/plants');
     } catch (err) {
@@ -111,7 +125,14 @@ const PlantForm = () => {
   };
 
   if (loading) {
-    return <div className="nursery-page">Loading form...</div>;
+    return (
+      <div className="nursery-page">
+        <div className="page-header">
+          <h1 className="page-title">{isEditMode ? 'Edit Plant' : 'Add New Plant'}</h1>
+        </div>
+        <PlantFormSkeleton />
+      </div>
+    );
   }
 
   return (

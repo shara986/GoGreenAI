@@ -7,6 +7,7 @@ const Navbar = () => {
   const { isAuthenticated, user, logout, getDashboardPath } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const handleLogout = () => {
@@ -42,10 +43,19 @@ const Navbar = () => {
           <span className="brand-text">GoGreen <span className="highlight">AI</span></span>
         </Link>
 
-        <div className="nav-links">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/about" className="nav-link">About</Link>
-          <Link to="/contact" className="nav-link">Contact</Link>
+        {/* Mobile menu toggle button */}
+        <button
+          className="mobile-menu-toggle"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-label="Toggle Navigation"
+        >
+          {mobileMenuOpen ? '✕' : '☰'}
+        </button>
+
+        <div className={`nav-links ${mobileMenuOpen ? 'nav-links-mobile-open' : ''}`}>
+          <Link to="/" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Home</Link>
+          <Link to="/about" className="nav-link" onClick={() => setMobileMenuOpen(false)}>About</Link>
+          <Link to="/contact" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
 
           {isAuthenticated ? (
             <>

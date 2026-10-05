@@ -16,7 +16,12 @@ public interface NurseryRepository extends JpaRepository<Nursery, UUID> {
     Optional<Nursery> findByUserId(UUID userId);
 
     /**
-     * Check if a nursery already exists (enforces single-nursery rule).
+     * Check if a nursery already exists for a specific user.
      */
     boolean existsByUserId(UUID userId);
+
+    /**
+     * Return the single nursery in the system (ordered by creation for safety).
+     */
+    Optional<Nursery> findFirstByOrderByCreatedAtAsc();
 }

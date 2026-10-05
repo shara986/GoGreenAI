@@ -63,6 +63,22 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean enabled = true;
 
+    /** null = legacy account (treated as verified); false = pending verification */
+    @Column(name = "email_verified")
+    private Boolean emailVerified;
+
+    @Column(name = "verification_token")
+    private String verificationToken;
+
+    @Column(name = "verification_token_expiry")
+    private LocalDateTime verificationTokenExpiry;
+
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

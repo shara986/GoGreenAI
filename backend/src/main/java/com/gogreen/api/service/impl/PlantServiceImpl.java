@@ -66,8 +66,14 @@ public class PlantServiceImpl implements PlantService {
     @Override
     @Transactional(readOnly = true)
     public Page<PlantResponse> getNurseryOwnerPlants(String ownerUsername, Pageable pageable) {
+        return getNurseryOwnerPlants(ownerUsername, null, null, null, null, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PlantResponse> getNurseryOwnerPlants(String ownerUsername, String search, UUID categoryId, PlantType plantType, Boolean active, Pageable pageable) {
         Nursery nursery = getNurseryForOwner(ownerUsername);
-        return plantRepository.findByNurseryId(nursery.getId(), pageable)
+        return plantRepository.searchNurseryOwnerPlants(nursery.getId(), search, categoryId, plantType, active, pageable)
                 .map(plantMapper::toResponse);
     }
 
@@ -214,8 +220,8 @@ public class PlantServiceImpl implements PlantService {
     private Nursery getNurseryForOwner(String ownerUsername) {
         User owner = userRepository.findByUsername(ownerUsername)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", ownerUsername));
-        return nurseryRepository.findByUserId(owner.getId())
+        return nurseryRepository.findFirstByOrderByCreatedAtAsc()
                 .orElseThrow(() -> new BusinessRuleException(
-                    "No nursery found for owner. Please set up the nursery first."));
+                    "No nursery found. Please set up the nursery first."));
     }
 }

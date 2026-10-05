@@ -5,6 +5,10 @@ export const authService = {
   registerNursery: (data) => apiClient.post('/auth/register/nursery', data),
   login: (data) => apiClient.post('/auth/login', data),
   getCurrentUser: () => apiClient.get('/auth/me'),
+  verifyEmail: (token) => apiClient.get(`/auth/verify-email?token=${token}`),
+  forgotPassword: (data) => apiClient.post('/auth/forgot-password', data),
+  resetPassword: (data) => apiClient.post('/auth/reset-password', data),
+  isNurseryRegistrationAvailable: () => apiClient.get('/auth/nursery-registration-available'),
 };
 
 export const nurseryService = {

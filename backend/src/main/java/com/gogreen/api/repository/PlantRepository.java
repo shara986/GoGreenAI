@@ -63,4 +63,21 @@ public interface PlantRepository extends JpaRepository<Plant, UUID> {
         @Param("active") Boolean active,
         Pageable pageable
     );
+
+    @Query("""
+        SELECT p FROM Plant p
+        WHERE p.nursery.id = :nurseryId
+        AND (:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :search, '%')))
+        AND (:categoryId IS NULL OR p.category.id = :categoryId)
+        AND (:plantType IS NULL OR p.plantType = :plantType)
+        AND (:active IS NULL OR p.active = :active)
+    """)
+    Page<Plant> searchNurseryOwnerPlants(
+        @Param("nurseryId") UUID nurseryId,
+        @Param("search") String search,
+        @Param("categoryId") UUID categoryId,
+        @Param("plantType") PlantType plantType,
+        @Param("active") Boolean active,
+        Pageable pageable
+    );
 }

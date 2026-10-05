@@ -1,8 +1,13 @@
 import apiClient from './apiClient';
 
 export const getNurseryProfile = async () => {
-  const response = await apiClient.get('/nursery');
-  return response.data;
+  try {
+    const response = await apiClient.get('/nursery/profile');
+    return response.data;
+  } catch (err) {
+    const response = await apiClient.get('/nursery');
+    return response.data;
+  }
 };
 
 export const createNurseryProfile = async (data) => {

@@ -53,7 +53,16 @@ public class SecurityConfig {
                 // Allow all CORS preflight (OPTIONS) requests without authentication
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Public auth endpoints
-                .requestMatchers("/auth/register/customer", "/auth/register/nursery", "/auth/register", "/auth/login", "/auth/me").permitAll()
+                .requestMatchers(
+                        "/auth/register/customer",
+                        "/auth/register/nursery",
+                        "/auth/register",
+                        "/auth/login",
+                        "/auth/verify-email",
+                        "/auth/forgot-password",
+                        "/auth/reset-password",
+                        "/auth/nursery-registration-available"
+                ).permitAll()
                 // Public read endpoints
                 .requestMatchers(HttpMethod.GET, "/nursery").permitAll()
                 .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()

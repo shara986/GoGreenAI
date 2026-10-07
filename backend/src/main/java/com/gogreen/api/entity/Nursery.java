@@ -30,10 +30,11 @@ public class Nursery {
     private UUID id;
 
     /**
-     * The single nursery owner. One-to-one: one ROLE_NURSERY_OWNER owns exactly one Nursery.
+     * The founding nursery owner. Multiple ROLE_NURSERY_OWNER users may manage this nursery,
+     * but user_id references the original creator for backward compatibility.
      */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @NotBlank

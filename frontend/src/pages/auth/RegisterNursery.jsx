@@ -19,6 +19,8 @@ const RegisterNursery = () => {
     contactPhone: '',
     description: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,15 +39,17 @@ const RegisterNursery = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
+
     setIsSubmitting(true);
     try {
-      await registerNursery(formData);
-      setSuccess('Nursery Owner registered successfully! Redirecting to login...');
-      setTimeout(() => navigate('/login'), 2500);
+      const res = await registerNursery(formData);
+      setSuccess(res?.message || 'Nursery Owner registered successfully! Please check your email or server logs to verify your account.');
+      setTimeout(() => navigate('/login'), 4000);
     } catch (err) {
       setError(err.message || err.response?.data?.message || 'Registration failed.');
     } finally {
@@ -59,7 +63,7 @@ const RegisterNursery = () => {
         <div className="auth-header">
           <span className="auth-icon">🌱</span>
           <h1>Nursery Owner Registration</h1>
-          <p>Set up your nursery and start selling plants</p>
+          <p>Set up or join nursery management to start selling plants</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -92,11 +96,43 @@ const RegisterNursery = () => {
           <div className="form-row">
             <div className="form-group">
               <label>Password *</label>
-              <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Min 8 characters" required />
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Min 6 characters"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
             </div>
             <div className="form-group">
               <label>Confirm Password *</label>
-              <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Re-enter password" required />
+              <div className="password-input-wrapper">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Re-enter password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                >
+                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -134,7 +170,7 @@ const RegisterNursery = () => {
           </div>
 
           <button type="submit" className="auth-btn" disabled={isSubmitting}>
-            {isSubmitting ? 'Registering nursery...' : 'Register as Nursery Owner'}
+            {isSubmitting ? 'Registering nursery owner...' : 'Register as Nursery Owner'}
           </button>
         </form>
 

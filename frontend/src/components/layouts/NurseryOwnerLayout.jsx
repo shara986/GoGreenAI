@@ -57,6 +57,16 @@ const NurseryOwnerLayout = () => {
           <NavLink to="/nursery/sales" className="sidebar-nav-link" onClick={closeSidebar}>
             Sales
           </NavLink>
+          <NavLink to="/nursery/profile" className="sidebar-nav-link" onClick={closeSidebar}>
+            Profile
+          </NavLink>
+          <button 
+            onClick={handleLogout} 
+            className="sidebar-nav-link" 
+            style={{ background: 'none', border: 'none', textAlign: 'left', width: '100%', cursor: 'pointer', color: '#ffb7b7' }}
+          >
+            Logout
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -68,13 +78,17 @@ const NurseryOwnerLayout = () => {
       <main className="nursery-main-content">
         {/* Top Navbar */}
         <header className="nursery-topbar">
-          <div className="topbar-left">
+          <div className="topbar-left" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <button className="mobile-toggle-btn" onClick={toggleSidebar}>
               ☰
             </button>
+            <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1a4331' }}>GoGreen AI</span>
           </div>
           <div className="topbar-right">
             <span className="owner-name">Hi, {user?.name || 'Owner'}</span>
+            <NavLink to="/nursery/profile" style={{ color: '#2d6a4f', textDecoration: 'none', fontWeight: 500 }}>
+              Profile
+            </NavLink>
             <button onClick={handleLogout} className="logout-btn">
               Logout
             </button>

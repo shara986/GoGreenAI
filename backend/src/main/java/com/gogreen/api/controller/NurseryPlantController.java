@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import com.gogreen.api.entity.PlantType;
+
 @RestController
 @RequestMapping("/nursery/plants")
 @PreAuthorize("hasRole('NURSERY_OWNER')")
@@ -29,9 +31,13 @@ public class NurseryPlantController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<PlantResponse>>> getNurseryOwnerPlants(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) UUID categoryId,
+            @RequestParam(required = false) PlantType plantType,
+            @RequestParam(required = false) Boolean active,
             @AuthenticationPrincipal UserDetails userDetails,
             @PageableDefault(size = 12) Pageable pageable) {
-        Page<PlantResponse> plants = plantService.getNurseryOwnerPlants(userDetails.getUsername(), pageable);
+        Page<PlantResponse> plants = plantService.getNurseryOwnerPlants(userDetails.getUsername(), search, categoryId, plantType, active, pageable);
         return ResponseEntity.ok(ApiResponse.success(plants, "Nursery plants retrieved successfully."));
     }
 

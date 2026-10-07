@@ -5,6 +5,7 @@ import './Auth.css';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login, isAuthenticated, getDashboardPath } = useAuth();
@@ -39,6 +40,7 @@ const Login = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const sessionExpired = queryParams.get('expired');
+  const verified = queryParams.get('verified');
 
   return (
     <div className="auth-page">
@@ -49,6 +51,9 @@ const Login = () => {
           <p>Sign in to your GoGreen AI account</p>
         </div>
 
+        {verified && (
+          <div className="auth-success">Email verified successfully! You can now log in.</div>
+        )}
         {sessionExpired && (
           <div className="auth-error">Your session has expired. Please log in again.</div>
         )}
@@ -68,15 +73,30 @@ const Login = () => {
           </div>
 
           <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={credentials.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              required
-            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label style={{ marginBottom: 0 }}>Password</label>
+              <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: '#2e7d32' }}>
+                Forgot Password?
+              </Link>
+            </div>
+            <div className="password-input-wrapper" style={{ marginTop: '6px' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={credentials.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword((prev) => !prev)}
+                title={showPassword ? 'Hide Password' : 'Show Password'}
+              >
+                {showPassword ? '👁️' : '👁️‍🗨️'}
+              </button>
+            </div>
           </div>
 
           <button type="submit" className="auth-btn" disabled={isSubmitting}>

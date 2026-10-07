@@ -19,6 +19,8 @@ public interface PlantService {
     // Nursery Owner
     Page<PlantResponse> getNurseryOwnerPlants(String ownerUsername, Pageable pageable);
 
+    Page<PlantResponse> getNurseryOwnerPlants(String ownerUsername, String search, UUID categoryId, PlantType plantType, Boolean active, Pageable pageable);
+
     PlantResponse getNurseryOwnerPlantById(UUID id, String ownerUsername);
 
     PlantResponse createPlant(PlantRequest request, String ownerUsername);

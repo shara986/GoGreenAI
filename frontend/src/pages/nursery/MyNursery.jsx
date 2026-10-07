@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getNurseryProfile } from '../../services/nurseryService';
+import { ProfileSkeleton } from '../../components/common/Skeletons';
 import './NurseryPages.css';
 
 const MyNursery = () => {
@@ -7,31 +8,49 @@ const MyNursery = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await getNurseryProfile();
-        setNursery(response.data);
-        setError('');
-      } catch (err) {
-        console.error('Error fetching nursery profile:', err);
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const response = await getNurseryProfile();
+      setNursery(response.data);
+      setError('');
+    } catch (err) {
+      console.error('Error fetching nursery profile:', err);
+      if (err.response?.status === 401) {
+        setError('Your session has expired. Please login again.');
+      } else if (err.response?.status === 403) {
+        setError('You do not have permission to access this section.');
+      } else if (!err.response) {
+        setError('Unable to connect to the server. Please try again.');
+      } else {
         setError('Failed to load nursery profile. Please try again.');
-      } finally {
-        setLoading(false);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProfile();
   }, []);
 
   if (loading) {
-    return <div className="nursery-page">Loading nursery profile...</div>;
+    return (
+      <div className="nursery-page">
+        <ProfileSkeleton />
+      </div>
+    );
   }
 
   if (error) {
     return (
       <div className="nursery-page">
-        <div className="error-message">{error}</div>
+        <div className="error-message" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>{error}</span>
+          <button onClick={fetchProfile} className="btn-secondary" style={{ padding: '4px 12px', fontSize: '0.85rem' }}>
+            Retry
+          </button>
+        </div>
       </div>
     );
   }

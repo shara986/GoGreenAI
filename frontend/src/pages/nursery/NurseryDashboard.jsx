@@ -9,22 +9,30 @@ const NurseryDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchStatistics = async () => {
-      try {
-        const data = await getPlantStatistics();
-        // getPlantStatistics returns response.data which is { success, data: stats, message }
-        setStatistics(data.data || data);
-        setError('');
-      } catch (err) {
-        console.error('Error fetching statistics:', err);
+  const fetchStatistics = async () => {
+    setLoading(true);
+    try {
+      const data = await getPlantStatistics();
+      setStatistics(data.data || data);
+      setError('');
+    } catch (err) {
+      console.error('Error fetching statistics:', err);
+      if (err.response?.status === 401) {
+        setError('Your session has expired. Please login again.');
+      } else if (err.response?.status === 403) {
+        setError('You do not have permission to access this section.');
+      } else if (!err.response) {
+        setError('Unable to connect to the server. Please try again.');
+      } else {
         setError('Failed to load dashboard statistics.');
-        setStatistics({});
-      } finally {
-        setLoading(false);
       }
-    };
+      setStatistics(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchStatistics();
   }, []);
 
@@ -36,7 +44,14 @@ const NurseryDashboard = () => {
         <h1 className="page-title">Dashboard</h1>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="error-message" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>{error}</span>
+          <button onClick={fetchStatistics} className="btn-secondary" style={{ padding: '4px 12px', fontSize: '0.85rem' }}>
+            Retry
+          </button>
+        </div>
+      )}
 
       <div className="stats-grid">
         <div className="stat-card">

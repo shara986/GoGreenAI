@@ -15,6 +15,9 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import RegisterCustomer from './pages/auth/RegisterCustomer';
 import RegisterNursery from './pages/auth/RegisterNursery';
+import VerifyEmail from './pages/auth/VerifyEmail';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 // Customer Pages
 import CustomerDashboard from './pages/customer/CustomerDashboard';
@@ -78,7 +81,9 @@ function AppRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/register/customer" element={<RegisterCustomer />} />
         <Route path="/register/nursery" element={<RegisterNursery />} />
-
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         {/* Protected Non-Customer Routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<RoleRoute allowedRoles={['ROLE_ADMIN']} />}>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getPlants } from '../../services/plantService';
 import { getCategories } from '../../services/categoryService';
+import { addToCart } from '../../services/cartService';
+import { useCart } from '../../context/CartContext';
 import { PlantCardSkeleton } from '../../components/common/Skeletons';
 import './CustomerPages.css';
 
@@ -14,6 +16,7 @@ const PLANT_TYPES = [
 const PlantListing = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { refreshCart } = useCart();
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,6 +24,8 @@ const PlantListing = () => {
   const [plants, setPlants] = useState([]);
   const [categories, setCategories] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [addingCartId, setAddingCartId] = useState(null);
+  const [cartFeedbackId, setCartFeedbackId] = useState(null);
   
   // Read from URL parameters
   const searchQuery = searchParams.get('search') || '';
@@ -206,12 +211,37 @@ const PlantListing = () => {
                     )}
                   </div>
                   
-                  <button 
-                    className="btn-outline"
-                    onClick={() => navigate(`/customer/plants/${plant.id}`)}
-                  >
-                    View Details
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexDirection: 'column' }}>
+                    <button
+                      className="btn-primary"
+                      disabled={plant.stock === 0 || addingCartId === plant.id}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (plant.stock === 0) return;
+                        setAddingCartId(plant.id);
+                        try {
+                          await addToCart(plant.id, 1);
+                          refreshCart();
+                          setCartFeedbackId(plant.id);
+                          setTimeout(() => setCartFeedbackId(null), 2000);
+                        } catch (err) {
+                          alert(err.message || 'Failed to add to cart.');
+                        } finally {
+                          setAddingCartId(null);
+                        }
+                      }}
+                    >
+                      {addingCartId === plant.id ? 'Adding...' :
+                        cartFeedbackId === plant.id ? '✓ Added!' :
+                        plant.stock === 0 ? 'Out of Stock' : '🛒 Add to Cart'}
+                    </button>
+                    <button
+                      className="btn-outline"
+                      onClick={() => navigate(`/customer/plants/${plant.id}`)}
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

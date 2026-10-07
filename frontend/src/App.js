@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 import RoleRoute from './routes/RoleRoute';
 
@@ -9,29 +10,42 @@ import Navbar from './components/Navbar';
 import LoadingSpinner from './components/LoadingSpinner';
 import CustomerLayout from './components/layouts/CustomerLayout';
 
-// Pages
+// Auth Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import RegisterCustomer from './pages/auth/RegisterCustomer';
 import RegisterNursery from './pages/auth/RegisterNursery';
+
+// Customer Pages
 import CustomerDashboard from './pages/customer/CustomerDashboard';
 import PlantListing from './pages/customer/PlantListing';
 import PlantDetails from './pages/customer/PlantDetails';
 import CategoryList from './pages/customer/CategoryList';
+import Cart from './pages/customer/Cart';
+import Checkout from './pages/customer/Checkout';
+import Payment from './pages/customer/Payment';
+import OrderSuccess from './pages/customer/OrderSuccess';
+import Orders from './pages/customer/Orders';
+import OrderDetails from './pages/customer/OrderDetails';
+
+// Nursery Owner Pages
 import NurseryDashboard from './pages/nursery/NurseryDashboard';
 import MyNursery from './pages/nursery/MyNursery';
 import PlantManagement from './pages/nursery/PlantManagement';
 import PlantForm from './pages/nursery/PlantForm';
 import Inventory from './pages/nursery/Inventory';
+import NurseryOrders from './pages/nursery/NurseryOrders';
 import NurseryOwnerLayout from './components/layouts/NurseryOwnerLayout';
+
+// Admin
 import AdminDashboard from './pages/admin/AdminDashboard';
+
+// Public
 import Home from './pages/public/Home';
 import About from './pages/public/About';
 import Contact from './pages/public/Contact';
 
 import './App.css';
-
-
 
 const NotFoundPage = () => (
   <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -64,7 +78,7 @@ function AppRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/register/customer" element={<RegisterCustomer />} />
         <Route path="/register/nursery" element={<RegisterNursery />} />
-        
+
         {/* Protected Non-Customer Routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<RoleRoute allowedRoles={['ROLE_ADMIN']} />}>
@@ -85,8 +99,7 @@ function AppRoutes() {
             <Route path="/nursery/plants/add" element={<PlantForm />} />
             <Route path="/nursery/plants/:plantId/edit" element={<PlantForm />} />
             <Route path="/nursery/inventory" element={<Inventory />} />
-            
-            <Route path="/nursery/orders" element={<PlaceholderPage title="Orders" />} />
+            <Route path="/nursery/orders" element={<NurseryOrders />} />
             <Route path="/nursery/sales" element={<PlaceholderPage title="Sales" />} />
           </Route>
         </Route>
@@ -100,10 +113,12 @@ function AppRoutes() {
             <Route path="/customer/plants" element={<PlantListing />} />
             <Route path="/customer/plants/:plantId" element={<PlantDetails />} />
             <Route path="/customer/categories" element={<CategoryList />} />
-            
-            {/* Placeholders for unemplemented features */}
-            <Route path="/customer/orders" element={<PlaceholderPage title="Orders" />} />
-            <Route path="/customer/cart" element={<PlaceholderPage title="Cart" />} />
+            <Route path="/customer/cart" element={<Cart />} />
+            <Route path="/customer/checkout" element={<Checkout />} />
+            <Route path="/customer/payment" element={<Payment />} />
+            <Route path="/customer/order-success/:orderId" element={<OrderSuccess />} />
+            <Route path="/customer/orders" element={<Orders />} />
+            <Route path="/customer/orders/:orderId" element={<OrderDetails />} />
             <Route path="/customer/profile" element={<PlaceholderPage title="Profile" />} />
             <Route path="/customer/ai-diagnosis" element={<PlaceholderPage title="AI Plant Diagnosis" />} />
           </Route>
@@ -113,14 +128,15 @@ function AppRoutes() {
   );
 }
 
-// Simple wrapper to render children inside the standard layout
 const OutletWrapper = () => <Outlet />;
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <AppRoutes />
+        <CartProvider>
+          <AppRoutes />
+        </CartProvider>
       </Router>
     </AuthProvider>
   );

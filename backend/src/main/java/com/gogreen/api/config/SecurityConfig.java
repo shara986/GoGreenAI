@@ -60,8 +60,14 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/plants/**").permitAll()
                 // Admin endpoints
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                // Nursery owner endpoints
-                .requestMatchers("/nursery/**").hasRole("NURSERY_OWNER")
+                // Nursery owner plant/profile endpoints (not orders — those use method security)
+                .requestMatchers("/nursery/plants/**", "/nursery/profile", "/nursery").hasRole("NURSERY_OWNER")
+                // Cart endpoints — customer only (also enforced at method level)
+                .requestMatchers("/cart/**").hasRole("CUSTOMER")
+                // Payment endpoints — customer only (method security also enforces)
+                .requestMatchers("/payments/**").hasRole("CUSTOMER")
+                // Order nursery endpoints — nursery owner (method security also enforces)
+                .requestMatchers("/orders/nursery/**").hasRole("NURSERY_OWNER")
                 // Everything else requires authentication
                 .anyRequest().authenticated()
             )

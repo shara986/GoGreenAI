@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import './CustomerLayout.css';
 
 const CustomerLayout = () => {
   const { user, logout } = useAuth();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -25,7 +27,6 @@ const CustomerLayout = () => {
 
   return (
     <div className="customer-layout">
-      {/* Top Navigation */}
       <header className="customer-header">
         <div className="header-left">
           <button className="menu-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
@@ -39,12 +40,16 @@ const CustomerLayout = () => {
           <div className="user-profile">
             <span className="user-name">Hi, {user?.name || user?.username}</span>
           </div>
-          <button className="cart-btn" onClick={() => navigate('/customer/cart')}>🛒</button>
+          <button className="cart-btn" onClick={() => navigate('/customer/cart')}>
+            🛒
+            {cartCount > 0 && (
+              <span className="cart-badge">{cartCount > 99 ? '99+' : cartCount}</span>
+            )}
+          </button>
         </div>
       </header>
 
       <div className="customer-body">
-        {/* Sidebar */}
         <aside className={`customer-sidebar ${isSidebarOpen ? 'open' : ''}`}>
           <nav className="sidebar-nav">
             {navItems.map((item) => (
@@ -56,6 +61,9 @@ const CustomerLayout = () => {
               >
                 <span className="icon">{item.icon}</span>
                 <span className="text">{item.name}</span>
+                {item.path === '/customer/cart' && cartCount > 0 && (
+                  <span className="sidebar-cart-badge">{cartCount > 99 ? '99+' : cartCount}</span>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -66,12 +74,10 @@ const CustomerLayout = () => {
           </div>
         </aside>
 
-        {/* Main Content Area */}
         <main className="customer-main">
           <Outlet />
         </main>
 
-        {/* Overlay for mobile sidebar */}
         {isSidebarOpen && (
           <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
         )}

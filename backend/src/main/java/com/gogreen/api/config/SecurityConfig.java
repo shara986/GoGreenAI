@@ -64,7 +64,7 @@ public class SecurityConfig {
                         "/auth/nursery-registration-available"
                 ).permitAll()
                 // Public read endpoints
-                .requestMatchers(HttpMethod.GET, "/nursery").permitAll()
+                .requestMatchers(HttpMethod.GET, "/nursery", "/nursery/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/plants/**").permitAll()
                 // Admin endpoints

@@ -20,7 +20,7 @@ public class NurseryController {
     private final NurseryService nurseryService;
 
     /**
-     * GET /nursery - Public: get the nursery info
+     * GET /nursery - Public: get the default nursery info
      */
     @GetMapping
     public ResponseEntity<ApiResponse<NurseryResponse>> getNursery() {
@@ -29,11 +29,32 @@ public class NurseryController {
     }
 
     /**
+     * GET /nursery/all - Public: search and list all nearby/registered nurseries
+     */
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<java.util.List<NurseryResponse>>> getAllNurseries(
+            @RequestParam(required = false) String search) {
+        java.util.List<NurseryResponse> list = nurseryService.getAllNurseries(search);
+        return ResponseEntity.ok(ApiResponse.success(list, "Nurseries retrieved successfully."));
+    }
+
+    /**
+     * GET /nursery/{id} - Public: get details of a specific nursery by ID
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<NurseryResponse>> getNurseryById(
+            @PathVariable java.util.UUID id) {
+        NurseryResponse response = nurseryService.getNurseryById(id);
+        return ResponseEntity.ok(ApiResponse.success(response, "Nursery details retrieved successfully."));
+    }
+
+    /**
      * GET /nursery/profile - Authenticated profile endpoint
      */
     @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<NurseryResponse>> getNurseryProfile() {
-        NurseryResponse response = nurseryService.getNursery();
+    public ResponseEntity<ApiResponse<NurseryResponse>> getNurseryProfile(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        NurseryResponse response = nurseryService.getNurseryProfileForUser(userDetails.getUsername());
         return ResponseEntity.ok(ApiResponse.success(response, "Nursery profile retrieved successfully."));
     }
 

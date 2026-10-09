@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:8081/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -12,7 +12,7 @@ const apiClient = axios.create({
 // Request interceptor — attach JWT token if available
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('gogreen_token');
+    const token = sessionStorage.getItem('gogreen_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -35,6 +35,7 @@ apiClient.interceptors.response.use(
     if (status === 401) {
       localStorage.removeItem('gogreen_token');
       localStorage.removeItem('gogreen_user');
+      sessionStorage.clear();
       if (window.location.pathname !== '/login') {
         window.location.href = '/login?expired=true';
       }

@@ -71,6 +71,7 @@ const CustomerDashboard = () => {
             }}
           />
           <button className="btn-primary" onClick={() => navigate('/customer/plants')}>Browse All Plants</button>
+          <button className="btn-nearby-nurseries" style={{ marginLeft: '10px', backgroundColor: '#1b4d24', color: '#ffffff', border: 'none', padding: '10px 18px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }} onClick={() => navigate('/customer/nearby-nurseries')}>📍 Nearby Nurseries</button>
         </div>
       </div>
 

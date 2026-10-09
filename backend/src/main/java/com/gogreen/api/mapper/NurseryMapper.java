@@ -10,6 +10,7 @@ public interface NurseryMapper {
 
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "ownerName", source = "user.name")
+    @Mapping(target = "plantCount", ignore = true)
     NurseryResponse toResponse(Nursery nursery);
 
     @Mapping(target = "id", ignore = true)

@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../nursery/NurseryPages.css'; // Reuse some standard page styles if needed
+import { useAuth } from '../../context/AuthContext';
+import '../nursery/NurseryPages.css';
 
 const Home = () => {
+  const { isAuthenticated, isNurseryOwner, isCustomer, isAdmin, getDashboardPath } = useAuth();
+
   return (
     <div>
       <section style={{ 
@@ -22,11 +25,38 @@ const Home = () => {
         <p style={{ fontSize: '1.4rem', color: '#4a5568', marginBottom: '2.5rem', maxWidth: '700px', lineHeight: '1.6' }}>
           Your intelligent ecosystem for buying, selling, and caring for plants. Empowered by AI to help you cultivate the perfect green space.
         </p>
-        <div style={{ display: 'flex', gap: '20px' }}>
-          <Link to="/register" className="btn-register-main" style={{ textDecoration: 'none', padding: '14px 28px', fontSize: '1.1rem' }}>
-            Start Shopping
-          </Link>
-          <Link to="/about" className="btn-login" style={{ textDecoration: 'none', padding: '14px 28px', fontSize: '1.1rem' }}>
+        
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          {isAuthenticated ? (
+            <>
+              {isNurseryOwner && (
+                <Link to="/nursery/dashboard" className="btn-register-main" style={{ textDecoration: 'none', padding: '14px 28px', fontSize: '1.1rem' }}>
+                  🏡 Manage My Nursery
+                </Link>
+              )}
+              {isCustomer && (
+                <Link to="/customer/plants" className="btn-register-main" style={{ textDecoration: 'none', padding: '14px 28px', fontSize: '1.1rem' }}>
+                  🪴 Start Shopping Plants
+                </Link>
+              )}
+              {isAdmin && (
+                <Link to="/admin/dashboard" className="btn-register-main" style={{ textDecoration: 'none', padding: '14px 28px', fontSize: '1.1rem' }}>
+                  📊 Admin Dashboard
+                </Link>
+              )}
+            </>
+          ) : (
+            <>
+              <Link to="/register/customer" className="btn-register-main" style={{ textDecoration: 'none', padding: '14px 28px', fontSize: '1.1rem' }}>
+                🪴 Explore Plants
+              </Link>
+              <Link to="/register/nursery" className="btn-login" style={{ textDecoration: 'none', padding: '14px 28px', fontSize: '1.1rem' }}>
+                🌱 Register Your Nursery
+              </Link>
+            </>
+          )}
+
+          <Link to="/about" className="btn-login" style={{ textDecoration: 'none', padding: '14px 28px', fontSize: '1.1rem', background: '#fff' }}>
             Learn More
           </Link>
         </div>

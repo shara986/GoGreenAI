@@ -62,7 +62,15 @@ const CategoryList = () => {
             >
               <div className="category-img-container" style={{ width: '120px', height: '120px' }}>
                  {category.imageUrl ? (
-                   <img src={category.imageUrl} alt={category.name} className="category-img" />
+                   <img 
+                     src={category.imageUrl} 
+                     alt={category.name} 
+                     className="category-img" 
+                     onError={(e) => {
+                       e.target.onerror = null;
+                       e.target.src = 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80';
+                     }}
+                   />
                  ) : (
                    <div className="category-placeholder">📁</div>
                  )}

@@ -43,7 +43,7 @@ const NurseryOwnerLayout = () => {
             Dashboard
           </NavLink>
           <NavLink to="/nursery/profile" className="sidebar-nav-link" onClick={closeSidebar}>
-            My Nursery
+            My Nursery Profile
           </NavLink>
           <NavLink to="/nursery/plants" className="sidebar-nav-link" onClick={closeSidebar}>
             Plants
@@ -56,9 +56,6 @@ const NurseryOwnerLayout = () => {
           </NavLink>
           <NavLink to="/nursery/sales" className="sidebar-nav-link" onClick={closeSidebar}>
             Sales
-          </NavLink>
-          <NavLink to="/nursery/profile" className="sidebar-nav-link" onClick={closeSidebar}>
-            Profile
           </NavLink>
           <button 
             onClick={handleLogout} 
@@ -84,11 +81,10 @@ const NurseryOwnerLayout = () => {
             </button>
             <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1a4331' }}>GoGreen AI</span>
           </div>
-          <div className="topbar-right">
-            <span className="owner-name">Hi, {user?.name || 'Owner'}</span>
-            <NavLink to="/nursery/profile" style={{ color: '#2d6a4f', textDecoration: 'none', fontWeight: 500 }}>
-              Profile
-            </NavLink>
+          <div className="topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <span className="owner-name" style={{ fontWeight: 600, color: '#1a4331', background: '#e8f5e9', padding: '6px 14px', borderRadius: '20px', fontSize: '0.9rem' }}>
+              🌱 {user?.name || user?.username || 'Owner'}
+            </span>
             <button onClick={handleLogout} className="logout-btn">
               Logout
             </button>

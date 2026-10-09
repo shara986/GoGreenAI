@@ -59,6 +59,7 @@ public class AdminInitializer implements CommandLineRunner {
                     .password(passwordEncoder.encode("Owner@1234"))
                     .role(Role.ROLE_NURSERY_OWNER)
                     .enabled(true)
+                    .emailVerified(true)
                     .build();
             owner = userRepository.save(owner);
             log.info("Initial Nursery Owner user created with username 'nursery_owner'");
@@ -67,12 +68,13 @@ public class AdminInitializer implements CommandLineRunner {
             owner.setPassword(passwordEncoder.encode("Owner@1234"));
             owner.setRole(Role.ROLE_NURSERY_OWNER);
             owner.setEnabled(true);
+            owner.setEmailVerified(true);
             owner = userRepository.save(owner);
             log.info("Nursery Owner user password verified/reset to 'Owner@1234'");
         }
 
         // Ensure Nursery Profile exists
-        if (nurseryRepository.findByUserId(owner.getId()).isEmpty()) {
+        if (nurseryRepository.findFirstByUserId(owner.getId()).isEmpty()) {
             Nursery nursery = Nursery.builder()
                     .user(owner)
                     .name("GoGreen Central Nursery")

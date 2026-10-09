@@ -70,6 +70,12 @@ public class Nursery {
     @Column(name = "logo_url")
     private String logoUrl;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     @OneToMany(mappedBy = "nursery", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Plant> plants = new ArrayList<>();

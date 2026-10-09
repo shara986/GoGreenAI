@@ -31,6 +31,7 @@ const PlantListing = () => {
   const searchQuery = searchParams.get('search') || '';
   const categoryId = searchParams.get('categoryId') || '';
   const plantType = searchParams.get('plantType') || '';
+  const nurseryId = searchParams.get('nurseryId') || '';
   const currentPage = parseInt(searchParams.get('page') || '0', 10);
   
   useEffect(() => {
@@ -60,6 +61,7 @@ const PlantListing = () => {
         if (searchQuery) params.search = searchQuery;
         if (categoryId) params.categoryId = categoryId;
         if (plantType) params.plantType = plantType;
+        if (nurseryId) params.nurseryId = nurseryId;
         
         const res = await getPlants(params);
         setPlants(res.data?.content || []);
@@ -188,7 +190,15 @@ const PlantListing = () => {
               <div key={plant.id} className="plant-card">
                 <div className="plant-img-container">
                   {plant.imageUrl ? (
-                    <img src={plant.imageUrl} alt={plant.name} className="plant-img" />
+                    <img 
+                      src={plant.imageUrl} 
+                      alt={plant.name} 
+                      className="plant-img" 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=600&q=80';
+                      }}
+                    />
                   ) : (
                     <div className="plant-placeholder">🌿</div>
                   )}

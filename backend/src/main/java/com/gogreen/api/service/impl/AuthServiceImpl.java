@@ -53,6 +53,9 @@ public class AuthServiceImpl implements AuthService {
     @Value("${app.frontend.url:http://localhost:3000}")
     private String frontendUrl;
 
+    @Value("${app.mail.enabled:false}")
+    private boolean mailEnabled;
+
     @Override
     @Transactional
     public UserResponse registerCustomer(RegisterRequest request) {
@@ -80,32 +83,26 @@ public class AuthServiceImpl implements AuthService {
 
         user = userRepository.save(user);
 
-        // If a nursery already exists, the new owner joins the existing nursery.
-        // If no nursery exists yet (first owner), create one from the registration form.
-        if (nurseryRepository.count() == 0) {
-            String nurseryName = StringUtils.hasText(request.getNurseryName()) ? request.getNurseryName() : request.getName() + "'s Nursery";
-            String address = StringUtils.hasText(request.getAddress()) ? request.getAddress() : "Default Nursery Address";
-            String city = StringUtils.hasText(request.getCity()) ? request.getCity() : "Default City";
-            String contactEmail = StringUtils.hasText(request.getContactEmail()) ? request.getContactEmail() : request.getEmail();
-            String contactPhone = StringUtils.hasText(request.getContactPhone()) ? request.getContactPhone() : request.getPhoneNumber();
+        String nurseryName = StringUtils.hasText(request.getNurseryName()) ? request.getNurseryName() : request.getName() + "'s Nursery";
+        String address = StringUtils.hasText(request.getAddress()) ? request.getAddress() : "Default Nursery Address";
+        String city = StringUtils.hasText(request.getCity()) ? request.getCity() : "Default City";
+        String contactEmail = StringUtils.hasText(request.getContactEmail()) ? request.getContactEmail() : request.getEmail();
+        String contactPhone = StringUtils.hasText(request.getContactPhone()) ? request.getContactPhone() : request.getPhoneNumber();
 
-            Nursery nursery = Nursery.builder()
-                    .user(user)
-                    .name(nurseryName)
-                    .description(StringUtils.hasText(request.getDescription()) ? request.getDescription() : "Official Nursery")
-                    .address(address)
-                    .city(city)
-                    .postalCode(request.getPostalCode())
-                    .contactEmail(contactEmail)
-                    .contactPhone(contactPhone)
-                    .logoUrl(request.getLogoUrl())
-                    .build();
+        Nursery nursery = Nursery.builder()
+                .user(user)
+                .name(nurseryName)
+                .description(StringUtils.hasText(request.getDescription()) ? request.getDescription() : "Official Nursery")
+                .address(address)
+                .city(city)
+                .postalCode(request.getPostalCode())
+                .contactEmail(contactEmail)
+                .contactPhone(contactPhone)
+                .logoUrl(request.getLogoUrl())
+                .build();
 
-            nurseryRepository.save(nursery);
-            log.info("New Nursery Owner registered (pending verification): {} — created Nursery: {}", user.getUsername(), nursery.getName());
-        } else {
-            log.info("New Nursery Owner registered (pending verification): {} — joined existing nursery", user.getUsername());
-        }
+        nurseryRepository.save(nursery);
+        log.info("New Nursery Owner registered: {} — created Nursery: {}", user.getUsername(), nursery.getName());
 
         sendVerificationEmail(user);
         return userMapper.toResponse(user);
@@ -125,7 +122,11 @@ public class AuthServiceImpl implements AuthService {
 
         User user = (User) authentication.getPrincipal();
 
-        if (Boolean.FALSE.equals(user.getEmailVerified())) {
+        if (!mailEnabled && Boolean.FALSE.equals(user.getEmailVerified())) {
+            user.setEmailVerified(true);
+            user.setEnabled(true);
+            userRepository.save(user);
+        } else if (Boolean.FALSE.equals(user.getEmailVerified())) {
             throw new DisabledException("Please verify your email address before logging in.");
         }
 
@@ -227,7 +228,8 @@ public class AuthServiceImpl implements AuthService {
 
     private User buildPendingUser(String name, String username, String email,
                                   String password, String phoneNumber, Role role) {
-        String verificationToken = TokenUtils.generateSecureToken();
+        boolean autoVerify = !mailEnabled;
+        String verificationToken = autoVerify ? null : TokenUtils.generateSecureToken();
         return User.builder()
                 .name(name)
                 .username(username)
@@ -235,15 +237,17 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(password))
                 .phoneNumber(phoneNumber)
                 .role(role)
-                .enabled(false)
-                .emailVerified(false)
+                .enabled(autoVerify)
+                .emailVerified(autoVerify)
                 .verificationToken(verificationToken)
-                .verificationTokenExpiry(LocalDateTime.now().plusHours(48))
+                .verificationTokenExpiry(autoVerify ? null : LocalDateTime.now().plusHours(48))
                 .build();
     }
 
     private void sendVerificationEmail(User user) {
-        String verificationLink = frontendUrl + "/verify-email?token=" + user.getVerificationToken();
-        emailService.sendVerificationEmail(user.getEmail(), user.getName(), verificationLink);
+        if (mailEnabled) {
+            String verificationLink = frontendUrl + "/verify-email?token=" + user.getVerificationToken();
+            emailService.sendVerificationEmail(user.getEmail(), user.getName(), verificationLink);
+        }
     }
 }

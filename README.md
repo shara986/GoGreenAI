@@ -66,7 +66,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-The API will start at: **http://localhost:8080/api**
+The API will start at: **http://localhost:8081/api**
 
 ### Build a JAR
 

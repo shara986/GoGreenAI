@@ -13,6 +13,8 @@ export const authService = {
 
 export const nurseryService = {
   getNursery: () => apiClient.get('/nursery'),
+  getAllNurseries: (search) => apiClient.get('/nursery/all', { params: search ? { search } : {} }),
+  getNurseryById: (id) => apiClient.get(`/nursery/${id}`),
   createNursery: (data) => apiClient.post('/nursery', data),
   updateNursery: (data) => apiClient.put('/nursery', data),
 };

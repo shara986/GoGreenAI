@@ -8,19 +8,22 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Restore session from localStorage on initial render
+  // Restore session on initial render (only from sessionStorage so reopening website forces logout)
   useEffect(() => {
     try {
-      const savedToken = localStorage.getItem('gogreen_token');
-      const savedUser = localStorage.getItem('gogreen_user');
+      // Clear legacy localStorage data so previous user is never restored automatically
+      localStorage.removeItem('gogreen_token');
+      localStorage.removeItem('gogreen_user');
+
+      const savedToken = sessionStorage.getItem('gogreen_token');
+      const savedUser = sessionStorage.getItem('gogreen_user');
       if (savedToken && savedUser) {
         setToken(savedToken);
         setUser(JSON.parse(savedUser));
       }
     } catch (e) {
       console.error('Failed to restore authentication state:', e);
-      localStorage.removeItem('gogreen_token');
-      localStorage.removeItem('gogreen_user');
+      sessionStorage.clear();
     } finally {
       setLoading(false);
     }
@@ -30,8 +33,12 @@ export const AuthProvider = ({ children }) => {
     const response = await authService.login(credentials);
     const { accessToken, user: userData } = response.data.data;
 
-    localStorage.setItem('gogreen_token', accessToken);
-    localStorage.setItem('gogreen_user', JSON.stringify(userData));
+    // Use sessionStorage so session ends when browser/tab is closed & reopened
+    sessionStorage.setItem('gogreen_token', accessToken);
+    sessionStorage.setItem('gogreen_user', JSON.stringify(userData));
+    localStorage.removeItem('gogreen_token');
+    localStorage.removeItem('gogreen_user');
+
     setToken(accessToken);
     setUser(userData);
     return userData;
@@ -50,6 +57,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     localStorage.removeItem('gogreen_token');
     localStorage.removeItem('gogreen_user');
+    sessionStorage.clear();
     setToken(null);
     setUser(null);
   }, []);

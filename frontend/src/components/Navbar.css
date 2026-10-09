@@ -124,12 +124,8 @@
 }
 
 .dropdown-menu-open {
-  display: block;
+  display: block !important;
   animation: fadeInDown 0.2s ease;
-}
-
-.register-dropdown:hover .dropdown-menu {
-  display: none;
 }
 
 .dropdown-item {

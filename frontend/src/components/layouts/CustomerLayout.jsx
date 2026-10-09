@@ -17,6 +17,7 @@ const CustomerLayout = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/customer/dashboard', icon: '🏠' },
+    { name: 'Nearby Nurseries', path: '/customer/nearby-nurseries', icon: '📍' },
     { name: 'Plants', path: '/customer/plants', icon: '🌿' },
     { name: 'Categories', path: '/customer/categories', icon: '📁' },
     { name: 'Orders', path: '/customer/orders', icon: '📦' },

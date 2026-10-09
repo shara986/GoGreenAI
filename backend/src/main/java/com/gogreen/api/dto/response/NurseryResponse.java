@@ -20,6 +20,9 @@ public class NurseryResponse {
     private String contactEmail;
     private String contactPhone;
     private String logoUrl;
+    private Double latitude;
+    private Double longitude;
+    private long plantCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

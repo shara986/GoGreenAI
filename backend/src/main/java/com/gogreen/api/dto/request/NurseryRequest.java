@@ -32,4 +32,7 @@ public class NurseryRequest {
     private String contactPhone;
 
     private String logoUrl;
+
+    private Double latitude;
+    private Double longitude;
 }

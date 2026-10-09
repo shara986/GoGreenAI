@@ -30,6 +30,9 @@ import Payment from './pages/customer/Payment';
 import OrderSuccess from './pages/customer/OrderSuccess';
 import Orders from './pages/customer/Orders';
 import OrderDetails from './pages/customer/OrderDetails';
+import UserProfile from './pages/customer/UserProfile';
+import AiDiagnosis from './pages/customer/AiDiagnosis';
+import NearbyNurseries from './pages/customer/NearbyNurseries';
 
 // Nursery Owner Pages
 import NurseryDashboard from './pages/nursery/NurseryDashboard';
@@ -38,6 +41,7 @@ import PlantManagement from './pages/nursery/PlantManagement';
 import PlantForm from './pages/nursery/PlantForm';
 import Inventory from './pages/nursery/Inventory';
 import NurseryOrders from './pages/nursery/NurseryOrders';
+import NurserySales from './pages/nursery/NurserySales';
 import NurseryOwnerLayout from './components/layouts/NurseryOwnerLayout';
 
 // Admin
@@ -77,6 +81,8 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/nearby-nurseries" element={<NearbyNurseries />} />
+        <Route path="/catalog" element={<PlantListing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/register/customer" element={<RegisterCustomer />} />
@@ -105,7 +111,7 @@ function AppRoutes() {
             <Route path="/nursery/plants/:plantId/edit" element={<PlantForm />} />
             <Route path="/nursery/inventory" element={<Inventory />} />
             <Route path="/nursery/orders" element={<NurseryOrders />} />
-            <Route path="/nursery/sales" element={<PlaceholderPage title="Sales" />} />
+            <Route path="/nursery/sales" element={<NurserySales />} />
           </Route>
         </Route>
       </Route>
@@ -115,6 +121,7 @@ function AppRoutes() {
         <Route element={<RoleRoute allowedRoles={['ROLE_CUSTOMER']} />}>
           <Route element={<CustomerLayout />}>
             <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+            <Route path="/customer/nearby-nurseries" element={<NearbyNurseries />} />
             <Route path="/customer/plants" element={<PlantListing />} />
             <Route path="/customer/plants/:plantId" element={<PlantDetails />} />
             <Route path="/customer/categories" element={<CategoryList />} />
@@ -124,8 +131,8 @@ function AppRoutes() {
             <Route path="/customer/order-success/:orderId" element={<OrderSuccess />} />
             <Route path="/customer/orders" element={<Orders />} />
             <Route path="/customer/orders/:orderId" element={<OrderDetails />} />
-            <Route path="/customer/profile" element={<PlaceholderPage title="Profile" />} />
-            <Route path="/customer/ai-diagnosis" element={<PlaceholderPage title="AI Plant Diagnosis" />} />
+            <Route path="/customer/profile" element={<UserProfile />} />
+            <Route path="/customer/ai-diagnosis" element={<AiDiagnosis />} />
           </Route>
         </Route>
       </Route>

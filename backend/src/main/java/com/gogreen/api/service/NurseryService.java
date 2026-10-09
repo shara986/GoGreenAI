@@ -7,6 +7,12 @@ public interface NurseryService {
 
     NurseryResponse getNursery();
 
+    java.util.List<NurseryResponse> getAllNurseries(String search);
+
+    NurseryResponse getNurseryById(java.util.UUID id);
+
+    NurseryResponse getNurseryProfileForUser(String ownerUsername);
+
     NurseryResponse createNursery(NurseryRequest request, String ownerUsername);
 
     NurseryResponse updateNursery(NurseryRequest request, String ownerUsername);

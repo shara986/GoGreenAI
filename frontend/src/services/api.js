@@ -42,3 +42,11 @@ export const plantService = {
   enablePlant: (id) => apiClient.put(`/admin/plants/${id}/enable`),
   hardDeletePlant: (id) => apiClient.delete(`/admin/plants/${id}`),
 };
+
+export const fileUploadService = {
+  uploadImage: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apiClient.post('/upload/image', formData);
+  },
+};

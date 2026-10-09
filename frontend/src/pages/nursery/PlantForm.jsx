@@ -18,6 +18,7 @@ const PlantForm = () => {
   const [loading, setLoading] = useState(isEditMode);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -81,6 +82,36 @@ const PlantForm = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setError('');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'gogreen_preset');
+
+      const res = await fetch(
+        'https://api.cloudinary.com/v1_1/afaqmmu1/image/upload',
+        { method: 'POST', body: formData }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || 'Upload failed');
+
+      setFormData((prev) => ({
+        ...prev,
+        imageUrl: data.secure_url
+      }));
+    } catch (err) {
+      console.error('Error uploading image:', err);
+      setError(err.message || 'Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -190,8 +221,28 @@ const PlantForm = () => {
           </div>
 
           <div className="form-group">
-            <label>Image URL</label>
-            <input type="url" name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://..." />
+            <label>Plant Image</label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleImageUpload} 
+              disabled={uploadingImage} 
+            />
+            {uploadingImage && (
+              <span style={{color: '#f59e0b', fontSize: '0.9rem', marginTop: '5px', display: 'block'}}>
+                ⏳ Uploading image, please wait...
+              </span>
+            )}
+            {!uploadingImage && formData.imageUrl && (
+              <span style={{color: '#16a34a', fontSize: '0.9rem', marginTop: '5px', display: 'block'}}>
+                ✅ Image uploaded successfully!
+              </span>
+            )}
+            {formData.imageUrl && (
+              <div className="image-preview">
+                <img src={formData.imageUrl} alt="Plant Preview" width="100" style={{marginTop: '10px', borderRadius: '4px'}} />
+              </div>
+            )}
           </div>
 
           <div className="form-group full-width">

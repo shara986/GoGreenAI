@@ -89,4 +89,12 @@ public class NurseryPlantController {
         PlantResponse plant = plantService.activatePlant(plantId, userDetails.getUsername());
         return ResponseEntity.ok(ApiResponse.success(plant, "Plant activated successfully."));
     }
+
+    @DeleteMapping("/{plantId}")
+    public ResponseEntity<ApiResponse<Void>> deletePlant(
+            @PathVariable UUID plantId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        plantService.deleteNurseryPlant(plantId, userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.success(null, "Plant permanently deleted."));
+    }
 }

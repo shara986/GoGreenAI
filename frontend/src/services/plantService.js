@@ -51,3 +51,8 @@ export const getPlantStatistics = async () => {
   const response = await apiClient.get('/nursery/plants/statistics');
   return response.data;
 };
+
+export const deleteNurseryPlant = async (id) => {
+  const response = await apiClient.delete(`/nursery/plants/${id}`);
+  return response.data;
+};

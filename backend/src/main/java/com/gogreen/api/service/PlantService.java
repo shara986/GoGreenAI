@@ -31,6 +31,8 @@ public interface PlantService {
 
     PlantResponse activatePlant(UUID id, String ownerUsername);
 
+    void deleteNurseryPlant(UUID id, String ownerUsername);
+
     PlantStatisticsResponse getNurseryPlantStatistics(String ownerUsername);
 
     // Admin

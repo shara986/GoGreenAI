@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getNurseryPlants, disablePlant, enablePlant } from '../../services/plantService';
+import { getNurseryPlants, disablePlant, enablePlant, deleteNurseryPlant } from '../../services/plantService';
 import { getCategories } from '../../services/categoryService';
 import { PlantTableSkeleton } from '../../components/common/Skeletons';
 import './NurseryPages.css';
@@ -17,6 +17,8 @@ const PlantManagement = () => {
   
   // Confirmation Modal State
   const [deactivateTarget, setDeactivateTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Search and Filter states
   const [search, setSearch] = useState('');
@@ -89,9 +91,29 @@ const PlantManagement = () => {
     try {
       await enablePlant(plant.id);
       fetchPlants();
+      setSuccessMessage('Plant activated successfully!');
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
       console.error('Error enabling plant:', err);
       alert('Failed to activate plant. Please try again.');
+    }
+  };
+
+  const confirmDelete = (plant) => {
+    setDeleteTarget(plant);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    try {
+      await deleteNurseryPlant(deleteTarget.id);
+      setDeleteTarget(null);
+      fetchPlants();
+      setSuccessMessage('Plant deleted successfully!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (err) {
+      console.error('Error deleting plant:', err);
+      alert('Failed to delete plant. Please try again.');
     }
   };
 
@@ -108,6 +130,12 @@ const PlantManagement = () => {
           <button onClick={fetchPlants} className="btn-secondary" style={{ padding: '4px 12px', fontSize: '0.85rem' }}>
             Retry
           </button>
+        </div>
+      )}
+
+      {successMessage && (
+        <div style={{ backgroundColor: '#e8f5e9', color: '#2e7d32', padding: '12px 16px', borderRadius: '4px', marginBottom: '20px', borderLeft: '4px solid #2e7d32' }}>
+          {successMessage}
         </div>
       )}
 
@@ -210,7 +238,7 @@ const PlantManagement = () => {
                         {plant.active ? (
                           <button 
                             onClick={() => confirmDeactivate(plant)} 
-                            className="action-btn delete"
+                            className="action-btn"
                           >
                             Disable
                           </button>
@@ -223,6 +251,13 @@ const PlantManagement = () => {
                             Enable
                           </button>
                         )}
+                        <button 
+                          onClick={() => confirmDelete(plant)} 
+                          className="action-btn delete"
+                          style={{ color: '#d32f2f', paddingLeft: '8px', marginLeft: '8px', borderLeft: '1px solid #ccc' }}
+                        >
+                          Delete
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -238,25 +273,32 @@ const PlantManagement = () => {
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', zindex: 2000
+          alignItems: 'center', justifyContent: 'center', zIndex: 2000
         }}>
           <div style={{ background: 'white', padding: '24px', borderRadius: '12px', maxWidth: '420px', width: '90%', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
             <h3 style={{ marginTop: 0, color: '#1a4331' }}>Deactivate Plant</h3>
-            <p style={{ color: '#555' }}>Are you sure you want to deactivate this plant (<strong>{deactivateTarget.name}</strong>)?</p>
+            <p style={{ color: '#555' }}>Are you sure you want to deactivate this plant (<strong>{deactivateTarget.name}</strong>)? Customers will not be able to see it.</p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '20px' }}>
-              <button 
-                onClick={() => setDeactivateTarget(null)} 
-                className="btn-secondary"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={handleDisableConfirm} 
-                className="btn-primary" 
-                style={{ backgroundColor: '#d32f2f' }}
-              >
-                Deactivate
-              </button>
+              <button onClick={() => setDeactivateTarget(null)} className="btn-secondary">Cancel</button>
+              <button onClick={handleDisableConfirm} className="btn-primary" style={{ backgroundColor: '#f57c00' }}>Deactivate</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal for Deletion */}
+      {deleteTarget && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', zIndex: 2000
+        }}>
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', maxWidth: '420px', width: '90%', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
+            <h3 style={{ marginTop: 0, color: '#d32f2f' }}>Delete Plant</h3>
+            <p style={{ color: '#555' }}>Are you sure you want to permanently delete <strong>{deleteTarget.name}</strong>? This action cannot be undone.</p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '20px' }}>
+              <button onClick={() => setDeleteTarget(null)} className="btn-secondary">Cancel</button>
+              <button onClick={handleDeleteConfirm} className="btn-primary" style={{ backgroundColor: '#d32f2f' }}>Delete</button>
             </div>
           </div>
         </div>

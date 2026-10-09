@@ -147,6 +147,18 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     @Transactional
+    public void deleteNurseryPlant(UUID id, String ownerUsername) {
+        Nursery nursery = getNurseryForOwner(ownerUsername);
+
+        Plant plant = plantRepository.findByIdAndNurseryId(id, nursery.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plant", "id", id));
+
+        plantRepository.delete(plant);
+        log.info("Plant permanently deleted by nursery owner: {}", id);
+    }
+
+    @Override
+    @Transactional
     public PlantResponse activatePlant(UUID id, String ownerUsername) {
         Nursery nursery = getNurseryForOwner(ownerUsername);
 

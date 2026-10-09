@@ -2,11 +2,8 @@ package com.gogreen.api.config;
 
 import com.gogreen.api.entity.Category;
 import com.gogreen.api.entity.Nursery;
-import com.gogreen.api.entity.Plant;
-import com.gogreen.api.entity.PlantType;
 import com.gogreen.api.repository.CategoryRepository;
 import com.gogreen.api.repository.NurseryRepository;
-import com.gogreen.api.repository.PlantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -14,11 +11,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @Order(2)
@@ -27,7 +21,6 @@ import java.util.stream.Collectors;
 public class DataInitializer implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
-    private final PlantRepository plantRepository;
     private final NurseryRepository nurseryRepository;
 
     private static final String DEFAULT_FALLBACK_IMG = "https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=800&q=80";
@@ -38,17 +31,6 @@ public class DataInitializer implements CommandLineRunner {
             "Succulents & Cacti", "https://images.unsplash.com/photo-1509423350716-97f936074e09?auto=format&fit=crop&w=800&q=80",
             "Outdoor & Flowering", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
             "Medicinal & Herbs", "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?auto=format&fit=crop&w=800&q=80"
-    );
-
-    private static final Map<String, String> PLANT_IMAGES = Map.of(
-            "Monstera Deliciosa", "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=800&q=80",
-            "Snake Plant Laurentii", "https://images.unsplash.com/photo-1593482892290-f54927ae1bac?auto=format&fit=crop&w=800&q=80",
-            "Peace Lily", "https://images.unsplash.com/photo-1593691509543-c55fb32e7355?auto=format&fit=crop&w=800&q=80",
-            "Aloe Vera Succulent", "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?auto=format&fit=crop&w=800&q=80",
-            "Red Rose Bush", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-            "Golden Pothos", "https://images.unsplash.com/photo-1597055181300-e3633a207519?auto=format&fit=crop&w=800&q=80",
-            "Jade Plant Tree", "https://images.unsplash.com/photo-1509423350716-97f936074e09?auto=format&fit=crop&w=800&q=80",
-            "English Lavender", "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=800&q=80"
     );
 
     @Override
@@ -167,156 +149,6 @@ public class DataInitializer implements CommandLineRunner {
             log.info("Synchronized image URLs for existing categories.");
         }
 
-        // 2. Seed or Update Plants
-        if (plantRepository.count() == 0) {
-            Optional<Nursery> nurseryOpt = nurseryRepository.findAll().stream().findFirst();
-            if (nurseryOpt.isEmpty()) {
-                log.warn("No nursery found. Skipping plant seeding.");
-                return;
-            }
-            Nursery nursery = nurseryOpt.get();
-
-            Map<String, Category> categoryMap = categoryRepository.findAll().stream()
-                    .collect(Collectors.toMap(Category::getName, c -> c));
-
-            log.info("Seeding default plant catalog...");
-
-            List<Plant> plants = List.of(
-                    Plant.builder()
-                            .nursery(nursery)
-                            .category(categoryMap.getOrDefault("Indoor Plants", categoryRepository.findAll().get(0)))
-                            .name("Monstera Deliciosa")
-                            .scientificName("Monstera deliciosa")
-                            .sku("SKU-MONSTERA-01")
-                            .description("Iconic Swiss Cheese plant featuring large glossy leaves with natural split patterns. A statement indoor plant for modern homes.")
-                            .careInstructions("Place in indirect bright sunlight. Water once weekly when top 2 inches of soil are dry.")
-                            .price(new BigDecimal("29.99"))
-                            .stock(20)
-                            .plantType(PlantType.INDOOR)
-                            .imageUrl(PLANT_IMAGES.get("Monstera Deliciosa"))
-                            .active(true)
-                            .build(),
-
-                    Plant.builder()
-                            .nursery(nursery)
-                            .category(categoryMap.getOrDefault("Air Purifiers", categoryRepository.findAll().get(0)))
-                            .name("Snake Plant Laurentii")
-                            .scientificName("Sansevieria trifasciata")
-                            .sku("SKU-SNAKE-02")
-                            .description("Extremely hardy air purifier with upright yellow-edged sword-shaped leaves. Removes formaldehyde and benzene from air.")
-                            .careInstructions("Thrives in any light condition. Water sparingly every 2 to 3 weeks.")
-                            .price(new BigDecimal("18.50"))
-                            .stock(30)
-                            .plantType(PlantType.INDOOR)
-                            .imageUrl(PLANT_IMAGES.get("Snake Plant Laurentii"))
-                            .active(true)
-                            .build(),
-
-                    Plant.builder()
-                            .nursery(nursery)
-                            .category(categoryMap.getOrDefault("Indoor Plants", categoryRepository.findAll().get(0)))
-                            .name("Peace Lily")
-                            .scientificName("Spathiphyllum wallisii")
-                            .sku("SKU-PEACE-03")
-                            .description("Elegant plant featuring glossy dark green foliage and long-lasting white blooms. Excellent air cleaner and humidity lover.")
-                            .careInstructions("Keep in medium to indirect light. Water when leaves drop slightly.")
-                            .price(new BigDecimal("22.00"))
-                            .stock(15)
-                            .plantType(PlantType.INDOOR)
-                            .imageUrl(PLANT_IMAGES.get("Peace Lily"))
-                            .active(true)
-                            .build(),
-
-                    Plant.builder()
-                            .nursery(nursery)
-                            .category(categoryMap.getOrDefault("Medicinal & Herbs", categoryRepository.findAll().get(0)))
-                            .name("Aloe Vera Succulent")
-                            .scientificName("Aloe barbadensis Miller")
-                            .sku("SKU-ALOE-04")
-                            .description("Popular succulent renowned for soothing medicinal gel stored inside thick fleshy leaves. Easy to grow indoors or outdoors.")
-                            .careInstructions("Bright sunlight is best. Allow soil to dry completely between waterings.")
-                            .price(new BigDecimal("14.99"))
-                            .stock(25)
-                            .plantType(PlantType.SUCCULENT)
-                            .imageUrl(PLANT_IMAGES.get("Aloe Vera Succulent"))
-                            .active(true)
-                            .build(),
-
-                    Plant.builder()
-                            .nursery(nursery)
-                            .category(categoryMap.getOrDefault("Outdoor & Flowering", categoryRepository.findAll().get(0)))
-                            .name("Red Rose Bush")
-                            .scientificName("Rosa rubiginosa")
-                            .sku("SKU-ROSE-05")
-                            .description("Classic red blooming rose shrub with fragrant flowers that bloom continuously throughout spring and summer.")
-                            .careInstructions("Requires 6+ hours of direct sunlight. Water deep twice weekly.")
-                            .price(new BigDecimal("19.75"))
-                            .stock(18)
-                            .plantType(PlantType.FLOWERING)
-                            .imageUrl(PLANT_IMAGES.get("Red Rose Bush"))
-                            .active(true)
-                            .build(),
-
-                    Plant.builder()
-                            .nursery(nursery)
-                            .category(categoryMap.getOrDefault("Air Purifiers", categoryRepository.findAll().get(0)))
-                            .name("Golden Pothos")
-                            .scientificName("Epipremnum aureum")
-                            .sku("SKU-POTHOS-06")
-                            .description("Fast-growing trailing vine with heart-shaped variegated green and yellow leaves. Perfect for hanging baskets or tall shelves.")
-                            .careInstructions("Tolerates low to medium light. Water when soil feels dry to the touch.")
-                            .price(new BigDecimal("15.50"))
-                            .stock(40)
-                            .plantType(PlantType.INDOOR)
-                            .imageUrl(PLANT_IMAGES.get("Golden Pothos"))
-                            .active(true)
-                            .build(),
-
-                    Plant.builder()
-                            .nursery(nursery)
-                            .category(categoryMap.getOrDefault("Succulents & Cacti", categoryRepository.findAll().get(0)))
-                            .name("Jade Plant Tree")
-                            .scientificName("Crassula ovata")
-                            .sku("SKU-JADE-07")
-                            .description("Symbol of good luck and prosperity. Features thick woody stems and oval jade-green succulent leaves.")
-                            .careInstructions("Full sun to bright indirect light. Avoid overwatering.")
-                            .price(new BigDecimal("16.99"))
-                            .stock(22)
-                            .plantType(PlantType.SUCCULENT)
-                            .imageUrl(PLANT_IMAGES.get("Jade Plant Tree"))
-                            .active(true)
-                            .build(),
-
-                    Plant.builder()
-                            .nursery(nursery)
-                            .category(categoryMap.getOrDefault("Outdoor & Flowering", categoryRepository.findAll().get(0)))
-                            .name("English Lavender")
-                            .scientificName("Lavandula angustifolia")
-                            .sku("SKU-LAVENDER-08")
-                            .description("Fragrant aromatic herb with purple flower spikes. Known for soothing scent, pollinator attraction, and natural stress relief.")
-                            .careInstructions("Full sun, warm temperatures and well-drained sandy soil.")
-                            .price(new BigDecimal("18.25"))
-                            .stock(12)
-                            .plantType(PlantType.HERB)
-                            .imageUrl(PLANT_IMAGES.get("English Lavender"))
-                            .active(true)
-                            .build()
-            );
-
-            plantRepository.saveAll(plants);
-            log.info("Seeded 8 sample plants into database.");
-        } else {
-            // Update existing plants with verified image URLs
-            List<Plant> plants = plantRepository.findAll();
-            for (Plant p : plants) {
-                if (PLANT_IMAGES.containsKey(p.getName())) {
-                    p.setImageUrl(PLANT_IMAGES.get(p.getName()));
-                } else if (p.getImageUrl() == null || p.getImageUrl().isBlank()) {
-                    p.setImageUrl(DEFAULT_FALLBACK_IMG);
-                }
-            }
-            plantRepository.saveAll(plants);
-            log.info("Synchronized image URLs for existing plants.");
-        }
+        log.info("DataInitializer complete. Plants are managed exclusively by nursery owners via the dashboard.");
     }
 }
